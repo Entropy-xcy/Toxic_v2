@@ -1,1 +1,5 @@
 # Toxic v2
+Toxic v2 is one of the simplest implementation of a functional processor in the world. It is a 4-bit stack machine with variable addressing width. It is a new edition of the previous Toxic v1 project. You may want to refer to the [ISA_Specifications](ISA_Specifications.md) of Toxic v2.
+## Why going from v1 to v2?
+Our goal of the project is to make a processor as simple as possible while maintaining basic functionalities. One of our objective is to make this processor being able to run simulators of various modern processors (of course theoretically, assuming infinite fast clock rate and infinite amount of RAM). We want this design to be simple,  so we don't want to have an ISA with variable instruction length. However, there are only 16 possible combinations of instructions which is just not enough for a two address machine. As a result, we create this Toxic_v2 project and switch our design to stack machine.
+## What is special about this design?
