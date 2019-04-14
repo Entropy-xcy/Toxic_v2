@@ -13,10 +13,10 @@
 
   | 3,2\1,0 | 00   | 01   | 11   | 10   |
   | ------- | ---- | ---- | ---- | ---- |
-  | **00**  | P    | POP  | ADD  | SV   |
-  | **01**  | U    | DIS  | NAND | LD   |
-  | **11**  | S    | SWP  | LS   | BLE  |
-  | **10**  | H    | DUP  | RS   | BGT  |
+  | **00**  | PUSH0   | A0  | ADD  | SV   |
+  | **01**  | PUSH1   | POP  | NAND | LD   |
+  | **11**  | A2    | SWP  | LS   | BLE  |
+  | **10**  | A1    | DUP  | RS   | BGT  |
 
   
 
