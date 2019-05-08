@@ -1,4 +1,4 @@
-\documentclass[11pt]{book}
+\documentclass[11pt]{report}
 \usepackage{graphicx}
 \usepackage{hyperref}
 \begin{document}
@@ -23,6 +23,7 @@
 
 
     \chapter{Design of the Processor}
+    \label{chapter:design}
     \section{Overview}
     This processor is a \textbf{4-bit} \textbf{Stack machine} (0-address machine).
     \begin{itemize}
@@ -99,12 +100,9 @@
     More versions of definitions of implementations can be found in Chapter \ref{chapter:implementation}
     \label{section:addressingspace}
     \subsection{Reserved: 0x0-0xf}
-    \subsection{Code Memory: 0x10-0xffff}
-    \subsection{Data Memory: 0x1000}
-    \subsection{Peripherals:}
-
-
-
+    \subsection{Code Memory: 0x10-0x7fff}
+    \subsection{Data Memory: 0x8000-0xefff}
+    \subsection{Peripherals: 0xf000-0xffff}
 
     \chapter{Instruction Set Architecture}
     \section{Instructions Map}
@@ -118,19 +116,90 @@
         10                     & CD  & RVS & RS   & B0 \\ \hline
         \end{tabular}
     \end{table}
+    For the explanation of instructions below, refer to Chapter \ref{chapter:design} for details
+    about terminologies like Stack, Queue, pop, push, enqueue, dequeue, TOS, NTOS.
     \section{Push Instructions}
     \subsection{P0}
+    \begin{itemize}
+        \item Functionality: \textbf{Push} 0000 to stack.
+        \item Expression:
+        \begin{verbatim}
+            Stack.push(0000);
+        \end{verbatim}
+    \end{itemize}
+
     \subsection{P1}
+    \begin{itemize}
+        \item Functionality: \textbf{Push} 0001 to stack.
+        \item Expression:
+        \begin{verbatim}
+            Stack.push(0001);
+        \end{verbatim}
+    \end{itemize}
 
     \section{Stack and Bus Operation Instructions}
     \subsection{POP}
+    \begin{itemize}
+        \item Functionality: \textbf{Pop} from stack and
+                \textbf{enqueue} the value \textbf{poped} from stack to the queue.
+        \item Expression:
+        \begin{verbatim}
+            val = Stack.pop();
+            Queue.enqueue(val);
+        \end{verbatim}
+    \end{itemize}
+
     \subsection{DIS}
+    \begin{itemize}
+        \item Functionality: \textbf{Pop} from the stack and discard the value.
+        \item Expression:
+        \begin{verbatim}
+            Stack.pop();
+        \end{verbatim}
+    \end{itemize}
+
     \subsection{SWP}
+    \begin{itemize}
+        \item Functionality: Swap the value of \textbf{TOS} and \textbf{NTOS}.
+        \item Expression:
+        \begin{verbatim}
+            val = Stack.ntos;
+            Stack.ntos = Stack.tos;
+            Stack.tos = val;
+        \end{verbatim}
+    \end{itemize}
+
     \subsection{RVS}
+    \begin{itemize}
+        \item Functionality: \textbf{dequeue} from the Queue and \textbf{push} the value 
+                    \textbf{dequeued} to the Stack.
+        \item Expression:
+        \begin{verbatim}
+            val = Queue.dequeue();
+            Stack.push(val);
+        \end{verbatim}
+    \end{itemize}
 
     \section{Numeric Computing Instructions}
     \subsection{ADD}
+    \begin{itemize}
+        \item Functionality: \textbf{Push} the value of \textbf{TOS} + \textbf{NTOS}.
+        \item Expression:
+        \begin{verbatim}
+            val = Stack.tos + Stack.ntos;
+            Stack.push(val);
+        \end{verbatim}
+    \end{itemize}
+
     \subsection{NAND}
+    \begin{itemize}
+        \item Functionality: \textbf{Push} the value of \textbf{TOS} NAND (bit-wise) \textbf{NTOS}.
+        \item Expression:
+        \begin{verbatim}
+            val = ~(Stack.tos & Stack.ntos);
+            Stack.push(val);
+        \end{verbatim}
+    \end{itemize}
     \subsection{LS}
     \subsection{RS}
 
