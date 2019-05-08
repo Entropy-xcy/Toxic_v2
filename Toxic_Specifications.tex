@@ -1,4 +1,4 @@
-\documentclass[11pt]{report}
+\documentclass[11pt]{book}
 \usepackage{graphicx}
 \usepackage{hyperref}
 \begin{document}
@@ -52,17 +52,57 @@
     The stack supports common operations like push and pop. For each Instruction we execute,
     we will have to read value from TOS (Top of Stack) and NTOS (Next Top of Stack), 
     and push the result of the operations to the stack.
+    (Refer to Figure \ref{figure:stack_model} for the model of the stack)
+    \begin{figure}[h!]
+        \centering
+        \includegraphics[scale=0.6]{Toxic_Stack_Model.png}
+        \caption{Toxic Stack Model}
+        \label{figure:stack_model}
+    \end{figure}
 
     \subsection{Queue for Addressing Bus}
-    \subsection{Code Memory}
-    \subsection{Data Memory}
+    We have discussed that the addressing width for the Toxic processor is configurable and 
+    usually more than 4 bits. Thus, we establish a Queue as the data structure for storing
+    the address of the Bus. For the length of the queue, we have $Length(Queue) = BitWidth(BusAddress) / 4 * 2$ \par
+    Queue is a FIFO data structure. However, the Queue data structure we used in the Toxic 
+    processor is similar to the common Queue but with some tweaks. Same as the stack, each 
+    block in the Queue is a 4-bits register. The Queue should supports common operations like 
+    \textbf{enqueue} and \textbf{dequeue}. Refer to Figure \ref{figure:queue_model} for the model
+    of the queue and the connection with the BusAddress. Noted that, when we \textbf{enqueue}, all
+    the blocks shift left one position relative to the BusAddress; when we \textbf{dequeue}, all
+    the blocks shift right one position relative to the BusAddress.
+    \begin{figure}[h!]
+        \centering
+        \includegraphics[scale=0.5]{Toxic_Queue_Model.png}
+        \caption{Toxic Queue Model}
+        \label{figure:queue_model}
+    \end{figure}
+    \subsection{Memory}
+    The memory of the Toxic processor is accessed through Bus and only takes part of the addressing space. 
+    The model of the Memory is different from common RAMs since for common RAMs, the block bit width is 1 bype (8 bits)
+    while for the Toxic processor, the width of a block is half-byte (4 bits). \par
+    For the Toxic processor, we assign the width of each block of the memory to be 4 bits.
+    This memory model can be easily implemented using a standard memory block and would be discussed in detail in 
+    Chapter \ref{chapter:implementation}.
+    Detailed addressing space definitions can be found in detail in section \ref{section:addressingspace}.
 
     \section{Addressing Modes}
-    \subsection{Top of Stack}
-    \subsection{Secondary Top of Stack}
-    \subsection{Bus}
+    There are three addressing modes in the Toxic processor:
+    \begin{itemize}
+        \item TOS (Top of Stack)
+        \item NTOS (Next Top of Stack)
+        \item Bus for memory and peripherals
+    \end{itemize}
 
     \section{Addressing Space}
+    These definitions for the addressing space is for the standard version of the Toxic processor.
+    More versions of definitions of implementations can be found in Chapter \ref{chapter:implementation}
+    \label{section:addressingspace}
+    \subsection{Reserved: 0x0-0xf}
+    \subsection{Code Memory: 0x10-0xffff}
+    \subsection{Data Memory: 0x1000}
+    \subsection{Peripherals:}
+
 
 
 
@@ -109,7 +149,9 @@
 
 
     \chapter{Implementation}
+    \label{chapter:implementation}
     \section{Modules List}
+    \section{Data Path}
 
 
 \end{document}
