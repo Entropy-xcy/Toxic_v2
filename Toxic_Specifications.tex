@@ -1,0 +1,115 @@
+\documentclass[11pt]{report}
+\usepackage{graphicx}
+\usepackage{hyperref}
+\begin{document}
+\begin{titlepage}
+    \thispagestyle{empty}
+    \title{%
+    Toxic Processor \\
+    \large A simplistic 4-bit processor ready to synthesis \\ 
+    Version 2.0.0}
+    \author{Entropy Xu \\ 
+            \href{mailto:entropy.xcy@protonmail.com}{entropy.xcy@protonmail.com} }
+    \maketitle
+    \end{titlepage}
+    \tableofcontents
+
+
+    \chapter{Introduction}
+    \section{Intention}
+    \section{Advantages}
+    \section{Limitations}
+    \section{History of Revisions}
+
+
+    \chapter{Design of the Processor}
+    \section{Overview}
+    This processor is a \textbf{4-bit} \textbf{Stack machine} (0-address machine).
+    \begin{itemize}
+        \item The addressing width is configurable to be a multiple of 4.
+        \item The stack depth is configurable to be greater than 16.
+        \item The width of each Instruction is 4 bits. Thus, 16 Instructions in total.
+        \item The width of each block inside the stack is 4 bits.
+        \item Von Neumann Architecture: seperate data memory and code memory.
+        \item Code memory and data memory are using the same addressing space.
+    \end{itemize}
+
+    \section{Data Structure}
+    The name \textbf{stack machine} or equivalently 0-address machine means that 
+    there is no addressable register in this machine neither do operands in the instructions. \par
+    
+    In order to store temporary data in this processor, we use a hardware stack to replace 
+    the register file which is usually implemented by other popular processors. \par
+
+    The 4-bit block-data-width will not limit the scalability of this processor in that addressing
+    width of this processor is 4-bits but a configurable width of a multiple of 4 
+    (usually 8 bits or 12 bits or 16 bits).
+
+    \subsection{Stack for Storing Temporary Data}
+    We have a stack for storing temporary data. 
+    Stack is a LIFO (Last In First Out) data structure.
+    Each block of the stack is a 4-bits register.
+    The stack supports common operations like push and pop. For each Instruction we execute,
+    we will have to read value from TOS (Top of Stack) and NTOS (Next Top of Stack), 
+    and push the result of the operations to the stack.
+
+    \subsection{Queue for Addressing Bus}
+    \subsection{Code Memory}
+    \subsection{Data Memory}
+
+    \section{Addressing Modes}
+    \subsection{Top of Stack}
+    \subsection{Secondary Top of Stack}
+    \subsection{Bus}
+
+    \section{Addressing Space}
+
+
+
+    \chapter{Instruction Set Architecture}
+    \section{Instructions Map}
+    \begin{table}[h]
+        \begin{tabular}{|l|l|l|l|l|}
+        \hline
+        1:0\textbackslash{}3:2 & 00  & 01  & 11   & 10 \\ \hline
+        00                     & P0  & POP & ADD  & SV \\ \hline
+        01                     & P1  & DIS & NAND & LD \\ \hline
+        11                     & CMP & SWP & LS   & B1 \\ \hline
+        10                     & CD  & RVS & RS   & B0 \\ \hline
+        \end{tabular}
+    \end{table}
+    \section{Push Instructions}
+    \subsection{P0}
+    \subsection{P1}
+
+    \section{Stack and Bus Operation Instructions}
+    \subsection{POP}
+    \subsection{DIS}
+    \subsection{SWP}
+    \subsection{RVS}
+
+    \section{Numeric Computing Instructions}
+    \subsection{ADD}
+    \subsection{NAND}
+    \subsection{LS}
+    \subsection{RS}
+
+    \section{Memory Operations Instructions}
+    \subsection{SV}
+    \subsection{LD}
+    \subsection{CD}
+
+    \section{Branch Instructions}
+    \subsection{B1}
+    \subsection{B0}
+
+    \section{Special Instructions}
+    \subsection{CMP}
+
+
+
+    \chapter{Implementation}
+    \section{Modules List}
+
+
+\end{document}
