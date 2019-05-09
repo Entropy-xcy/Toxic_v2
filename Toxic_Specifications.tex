@@ -113,7 +113,7 @@
         00                     & P0  & POP & ADD  & SV \\ \hline
         01                     & P1  & DIS & NAND & LD \\ \hline
         11                     & CMP & SWP & LS   & B1 \\ \hline
-        10                     & CD  & RVS & RS   & B0 \\ \hline
+        10                     & PC  & RVS & RS   & B0 \\ \hline
         \end{tabular}
     \end{table}
     For the explanation of instructions below, refer to Chapter \ref{chapter:design} for details
@@ -200,21 +200,103 @@
             Stack.push(val);
         \end{verbatim}
     \end{itemize}
+
     \subsection{LS}
+    \begin{itemize}
+        \item Functionality: \textbf{Left Shift} one bit the value of \textbf{TOS}.
+        \item Expression:
+        \begin{verbatim}
+            Stack.tos = Stack.tos << 1;
+        \end{verbatim}
+    \end{itemize}
+
     \subsection{RS}
+    \begin{itemize}
+        \item Functionality: \textbf{Right Shift} one bit the value of \textbf{TOS}.
+        \item Expression:
+        \begin{verbatim}
+            Stack.tos = Stack.tos >> 1;
+        \end{verbatim}
+    \end{itemize}
 
     \section{Memory Operations Instructions}
     \subsection{SV}
+    \begin{itemize}
+        \item Functionality: \textbf{Save} the value of \textbf{TOS} to memory location 
+                pointed by the \textbf{Bus} address.
+        \item Expression:
+        \begin{verbatim}
+            Memory[BusAddress] = Stack.tos;
+        \end{verbatim}
+    \end{itemize}
+
     \subsection{LD}
-    \subsection{CD}
+    \begin{itemize}
+        \item Functionality: \textbf{Push} the value of at memory location 
+                pointed by the \textbf{Bus} address to the \textbf{Stack}.
+        \item Expression:
+        \begin{verbatim}
+            Stack.push(Memory[BusAddress]);
+        \end{verbatim}
+    \end{itemize}
 
     \section{Branch Instructions}
     \subsection{B1}
+    \begin{itemize}
+        \item Functionality: Branch to the address pointed by the \textbf{Bus} 
+                address if the least significant bit of \textbf{TOS} is 1.
+        \item Expression:
+        \begin{verbatim}
+            if(Stack.tos[0] == 1)
+            {
+                PC = BusAddress;
+            }
+        \end{verbatim}
+    \end{itemize}
+
     \subsection{B0}
+    \begin{itemize}
+        \item Functionality: Branch to the address pointed by the \textbf{Bus} 
+                address if the least significant bit of \textbf{TOS} is 0.
+        \item Expression:
+        \begin{verbatim}
+            if(Stack.tos[0] == 0)
+            {
+                PC = BusAddress;
+            }
+        \end{verbatim}
+    \end{itemize}
 
     \section{Special Instructions}
     \subsection{CMP}
+    \begin{itemize}
+        \item Functionality: Compare \textbf{TOS} and \textbf{NTOS} with the assumption 
+                that they are both signed values, push an output (described below) to the Stack.
+        \item Output[0] equals 1 for \textbf{TOS} == \textbf{NTOS}, equals 0 otherwise.
+        \item Output[1] equals 1 for \textbf{TOS} > \textbf{NTOS}, equals 0 otherwise.
+        \item Output[2] equals 1 for \textbf{TOS} < \textbf{NTOS}, equals 0 otherwise.
+        \item Output[3] equals 1 for Numeric operation having an carry, equals 0 otherwise.
+        \item Expression:
+        \begin{verbatim}
+            output0 = Stack.tos == Stack.ntos;
+            output1 = Stack.tos > Stack.ntos;
+            output2 = Stack.tos < Stack.ntos;
+            output3 = carry;
+            Output = output0 + output1 << 1 
+                    + output2 << 2 + output3 << 3;
+            Stack.push(Output);
+        \end{verbatim}
+    \end{itemize}
 
+    \subsection{PC}
+    \begin{itemize}
+        \item Important Note: This Instruction is optional for the most simplistic design.
+        \item Functionality: Replace the whole \textbf{Queue} with current \textbf{PC}.
+        \item Expression:
+        \begin{verbatim}
+            Queue = PC;
+        \end{verbatim}
+    \end{itemize}
 
 
     \chapter{Implementation}
