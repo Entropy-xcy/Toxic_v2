@@ -31,8 +31,7 @@
         \item The stack depth is configurable to be greater than 16.
         \item The width of each Instruction is 4 bits. Thus, 16 Instructions in total.
         \item The width of each block inside the stack is 4 bits.
-        \item Von Neumann Architecture: seperate data memory and code memory.
-        \item Code memory and data memory are using the same addressing space.
+        \item Von Neumann Architecture: Code memory and data memory are using the same addressing space.
     \end{itemize}
 
     \section{Data Structure}
@@ -62,6 +61,7 @@
     \end{figure}
 
     \subsection{Queue for Addressing Bus}
+    \label{subsection:queue}
     We have discussed that the addressing width for the Toxic processor is configurable and 
     usually more than 4 bits. Thus, we establish a Queue as the data structure for storing
     the address of the Bus. For the length of the queue, we have $Length(Queue) = BitWidth(BusAddress) / 4 * 2$ \par
@@ -86,6 +86,11 @@
     This memory model can be easily implemented using a standard memory block and would be discussed in detail in 
     Chapter \ref{chapter:implementation}.
     Detailed addressing space definitions can be found in detail in section \ref{section:addressingspace}.
+    \subsection{Carry Bit}
+    Carry Bit is a single bit register storing the carry of operations. There are three instructions that may possibly 
+    generate a carry: ADD, LS, RS. Please refer to subsection \ref{subsection:add} for ADD, \ref{subsection:ls} for LS, 
+    \ref{subsection:rs} for RS. In addition, the instruction CMP allows programmers to access the carry bit. Please Refer to
+    \ref{subsection:cmp} for details.
 
     \section{Addressing Modes}
     There are three addressing modes in the Toxic processor:
@@ -110,8 +115,8 @@
         \begin{tabular}{|l|l|l|l|l|}
         \hline
         1:0\textbackslash{}3:2 & 00  & 01  & 11   & 10 \\ \hline
-        00                     & P0  & POP & ADD  & SV \\ \hline
-        01                     & P1  & DIS & NAND & LD \\ \hline
+        00                     & P1  & POP & ADD  & SV \\ \hline
+        01                     & P11  & DIS & NAND & LD \\ \hline
         11                     & CMP & SWP & LS   & B1 \\ \hline
         10                     & PC  & RVS & RS   & B0 \\ \hline
         \end{tabular}
@@ -119,21 +124,21 @@
     For the explanation of instructions below, refer to Chapter \ref{chapter:design} for details
     about terminologies like Stack, Queue, pop, push, enqueue, dequeue, TOS, NTOS.
     \section{Push Instructions}
-    \subsection{P0}
-    \begin{itemize}
-        \item Functionality: \textbf{Push} 0000 to stack.
-        \item Expression:
-        \begin{verbatim}
-            Stack.push(0000);
-        \end{verbatim}
-    \end{itemize}
-
     \subsection{P1}
     \begin{itemize}
         \item Functionality: \textbf{Push} 0001 to stack.
         \item Expression:
         \begin{verbatim}
             Stack.push(0001);
+        \end{verbatim}
+    \end{itemize}
+
+    \subsection{P11}
+    \begin{itemize}
+        \item Functionality: \textbf{Push} 0011 to stack.
+        \item Expression:
+        \begin{verbatim}
+            Stack.push(0011);
         \end{verbatim}
     \end{itemize}
 
@@ -182,6 +187,7 @@
 
     \section{Numeric Computing Instructions}
     \subsection{ADD}
+    \label{subsection:add}
     \begin{itemize}
         \item Functionality: \textbf{Push} the value of \textbf{TOS} + \textbf{NTOS}.
         \item Expression:
@@ -189,6 +195,7 @@
             val = Stack.tos + Stack.ntos;
             Stack.push(val);
         \end{verbatim}
+        \item Carry bit: 1 for addition having an carry, 0 for addition without an carry.
     \end{itemize}
 
     \subsection{NAND}
@@ -202,21 +209,25 @@
     \end{itemize}
 
     \subsection{LS}
+    \label{subsection:ls}
     \begin{itemize}
         \item Functionality: \textbf{Left Shift} one bit the value of \textbf{TOS}.
         \item Expression:
         \begin{verbatim}
             Stack.tos = Stack.tos << 1;
         \end{verbatim}
+        \item Carry bit: carry bit equals the most significant bit of \textbf{TOS} \textbf{before shifting.} 
     \end{itemize}
 
     \subsection{RS}
+    \label{subsection:rs}
     \begin{itemize}
         \item Functionality: \textbf{Right Shift} one bit the value of \textbf{TOS}.
         \item Expression:
         \begin{verbatim}
             Stack.tos = Stack.tos >> 1;
         \end{verbatim}
+        \item Carry bit: carry bit equals the least significant bit of \textbf{TOS} \textbf{before shifting.} 
     \end{itemize}
 
     \section{Memory Operations Instructions}
@@ -269,6 +280,7 @@
 
     \section{Special Instructions}
     \subsection{CMP}
+    \label{subsection:cmp}
     \begin{itemize}
         \item Functionality: Compare \textbf{TOS} and \textbf{NTOS} with the assumption 
                 that they are both signed values, push an output (described below) to the Stack.
@@ -276,6 +288,9 @@
         \item Output[1] equals 1 for \textbf{TOS} > \textbf{NTOS}, equals 0 otherwise.
         \item Output[2] equals 1 for \textbf{TOS} < \textbf{NTOS}, equals 0 otherwise.
         \item Output[3] equals 1 for Numeric operation having an carry, equals 0 otherwise.
+                        ADD, LS, RS are the three instructions that can possibly generate a carry.
+                        Please refer to subsection \ref{subsection:add} for ADD, \ref{subsection:ls} for LS, 
+                        \ref{subsection:rs} for RS.
         \item Expression:
         \begin{verbatim}
             output0 = Stack.tos == Stack.ntos;
@@ -291,18 +306,90 @@
     \subsection{PC}
     \begin{itemize}
         \item Important Note: This Instruction is optional for the most simplistic design.
-        \item Functionality: Replace the whole \textbf{Queue} with current \textbf{PC}.
+        \item Functionality: Replace the whole \textbf{BusAddress} with current \textbf{PC}.
+        \item Recall that \textbf{BusAddress} is part of the \textbf{Queue}. Please refer to \ref{subsection:queue}
+                for more details about BusAddress and Queue.
         \item Expression:
         \begin{verbatim}
-            Queue = PC;
+            BusAddress = PC;
         \end{verbatim}
     \end{itemize}
 
 
-    \chapter{Implementation}
+    \chapter{Micro-Architecture}
     \label{chapter:implementation}
     \section{Modules List}
     \section{Data Path}
 
+    \chapter{Assembly Language}
+    In this chapter we will talk about how to write assembly code for the Toxic processor
+    in a programmer's perspective. Useful Examples will also be provided.
+    \section{Format}
+    \begin{itemize}
+        \item Each Instruction should take one line.
+        \item Put comments after ";".
+        \item Use "," to connect several instructions in one line.
+        \item Use ":" to tag an location in code memory.
+    \end{itemize}
+    
+    \section{Useful Examples}
+    \subsection{Push 0000 to Stack}
+    Number of Instructions: 2
+    \begin{verbatim}
+        P1 ; TOS now is 0001
+        RS ; 0001 >> 1 = 0000
+    \end{verbatim}
+
+    \subsection{Push 1110 to Stack}
+    Number of Instructions: 10
+    \begin{verbatim}
+        P11; TOS now is 0011
+        LS,LS; TOS now is 1100
+        P1,LS; TOS now is 0010, NTOS now is 1100
+        ADD; Stack is: 1110, 0010, 0011
+        SWP,DIS,SWP,DIS; discard 0010 and 0011
+        ;now TOS is 1110
+    \end{verbatim}
+
+    \subsection{Push current TOS to Stack (Duplicate TOS)}
+    Number of Instructions: 5
+    \begin{verbatim}
+        P1, RS; Push 0000 to Stack
+        ADD; TOS + 0000 = TOS
+        SWP, DIS; discard 0000
+    \end{verbatim}
+
+    \subsection{Perform AND operation (Bitwise)}
+    Number of Instructions: 9
+    $$X or Y = (XnandY)nand(XnandY)$$
+    \begin{verbatim}
+        ; Suppose TOS is 1010 and NTOS is 1100
+        NAND ; TOS = ~(1010 & 1100) = 0111
+        P1, RS, ADD, SWP, DIS; duplicate TOS 
+        NAND ; TOS = ~(0111 & 0111) = 1000
+        SWP, DIS; discard 0111 we duplicated
+    \end{verbatim}
+
+    \subsection{Perform OR operation (Bitwise)}
+    Number of Instructions: 25
+    $$XorY = (XnandX)nand(YnandY)$$
+    \begin{verbatim}
+        ; Suppose TOS is 1010 and NTOS is 1100
+        P1, RS, ADD, SWP, DIS; duplicate TOS 
+        NAND; TOS = 1010 nand 1010 = 0101
+        POP; reserve the current TOS in Queue
+        DIS, SWP; discard duplicated 1010
+        ;then put 1100 on Top
+        P1, RS, ADD, SWP, DIS; duplicate 1100
+        NAND; TOS = 1100 nand 1100 =  0011
+        POP; reserve the current TOS in Queue
+        DIS, SWP; make the original Stack Intact
+        RVS, RVS; restore 0101 and 0011 from Queue
+        NAND; perform nand operation
+        ; now, TOS = 1010 or 1100 = 1110
+        SWP, DIS, SWP, DIS; discard 0101 and 0011
+    \end{verbatim}
+
+    \section{Pseudo Codes}
 
 \end{document}
