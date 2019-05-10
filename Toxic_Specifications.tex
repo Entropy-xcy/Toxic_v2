@@ -32,6 +32,7 @@
         \item The width of each Instruction is 4 bits. Thus, 16 Instructions in total.
         \item The width of each block inside the stack is 4 bits.
         \item Von Neumann Architecture: Code memory and data memory are using the same addressing space.
+        \item However, for easier implementation, we may use the seperate hardware for data memory and code memory.
     \end{itemize}
 
     \section{Data Structure}
@@ -306,7 +307,8 @@
     \subsection{PC}
     \begin{itemize}
         \item Important Note: This Instruction is optional for the most simplistic design.
-        \item Functionality: Replace the whole \textbf{BusAddress} with current \textbf{PC}.
+        \item Functionality: Replace the whole \textbf{BusAddress} with current \textbf{PC} (Program Counter). 
+                Please refer to Section \ref{section:pc} for more details about PC.
         \item Recall that \textbf{BusAddress} is part of the \textbf{Queue}. Please refer to \ref{subsection:queue}
                 for more details about BusAddress and Queue.
         \item Expression:
@@ -319,7 +321,24 @@
     \chapter{Micro-Architecture}
     \label{chapter:implementation}
     \section{Modules List}
-    \section{Data Path}
+    \begin{itemize}
+        \item PC: Program Counter
+        \item Instruction Memory
+        \item Data Memory
+        \item Queue
+        \item Stack
+        \item Controller
+        \item ALU
+    \end{itemize}
+    \section{PC: Program Counter}
+    \label{section:pc}
+    \section{Instruction Memory}
+    \section{Data Memory}
+    \section{Queue}
+    \section{Stack}
+    \section{Controller}
+    \section{ALU}
+    \section{Diagram}
 
     \chapter{Assembly Language}
     In this chapter we will talk about how to write assembly code for the Toxic processor
@@ -330,9 +349,77 @@
         \item Put comments after ";".
         \item Use "," to connect several instructions in one line.
         \item Use ":" to tag an location in code memory.
+        \item All pseudo code start with "\$".
+        \item The parameter of pseudo code is specified by "\#".
     \end{itemize}
     
-    \section{Useful Examples}
+    \section{Pseudo Codes}
+    \subsection{\$PUSH}
+    \begin{itemize}
+        \item Usage: \$PUSH\#xxxx
+        \item Functionality: Push "xxxx" to Stack
+        \item Example: \$PUSH\#1010
+    \end{itemize}
+    \subsection{\$JMP}
+    \begin{itemize}
+        \item Usage: \$JMP\#[Flag or numeric offset]
+        \item Functionality: Jump to the Flag or PC+offset
+        \item Example1: \$JMP\#end
+        \item Example2: \$JMP\#-5
+    \end{itemize}
+    \subsection{\$BEQ}
+    \begin{itemize}
+        \item Usage: \$BEQ\#[Flag or numeric offset]
+        \item Functionality: Branch to the Flag or PC+offset if TOS equals NTOS.
+        \item Example1: \$BEQ\#end
+        \item Example2: \$BEQ\#-5
+    \end{itemize}
+    \subsection{\$BG}
+    \begin{itemize}
+        \item Usage: \$BG\#[Flag or numeric offset]
+        \item Functionality: Branch to the Flag or PC+offset if TOS is greater than NTOS.
+        \item Example1: \$BG\#end
+        \item Example2: \$BG\#-5
+    \end{itemize}
+    \subsection{\$BL}
+    \begin{itemize}
+        \item Usage: \$BL\#[Flag or numeric offset]
+        \item Functionality: Branch to the Flag or PC+offset if TOS is less than NTOS.
+        \item Example1: \$BL\#end
+        \item Example2: \$BL\#-5
+    \end{itemize}
+    \subsection{\$ADDD}
+    \begin{itemize}
+        \item Usage: \$ADDD
+        \item Functionality: Push $(TOS + NTOS)$ to Stack while discarding last TOS and NTOS.
+        \item Example: \$ADDD
+    \end{itemize}
+    \subsection{\$ORD}
+    \begin{itemize}
+        \item Usage: \$ORD
+        \item Functionality: Push $(TOS | NTOS)$ to Stack while discarding last TOS and NTOS.
+        \item Example: \$ORD
+    \end{itemize}
+    \subsection{\$ANDD}
+    \begin{itemize}
+        \item Usage: \$ANDD
+        \item Functionality: Push $(TOS \& NTOS)$ to Stack while discarding last TOS and NTOS.
+        \item Example: \$ANDD
+    \end{itemize}
+    \subsection{\$NANDD}
+    \begin{itemize}
+        \item Usage: \$NANDD
+        \item Functionality: Push $\overline{(TOS \& NTOS)}$ to Stack while discarding last TOS and NTOS.
+        \item Example: \$NANDD
+    \end{itemize}
+    \subsection{\$DUP}
+    \begin{itemize}
+        \item Usage: \$DUP
+        \item Functionality: Push the value of current TOS to Stack. (Duplicate TOS)
+        \item Example: \$DUP
+    \end{itemize}
+
+    \section{Useful Examples: Without Pseudo Code}
     \subsection{Push 0000 to Stack}
     Number of Instructions: 2
     \begin{verbatim}
@@ -390,6 +477,6 @@
         SWP, DIS, SWP, DIS; discard 0101 and 0011
     \end{verbatim}
 
-    \section{Pseudo Codes}
+    \section{Useful Examples: With Pseudo Code}
 
 \end{document}
