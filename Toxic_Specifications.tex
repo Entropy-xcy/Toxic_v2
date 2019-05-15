@@ -35,7 +35,7 @@
         \item However, for easier implementation, we may use the seperate hardware for data memory and code memory.
     \end{itemize}
 
-    \section{Data Structure}
+    \section{Data Structure (Under Revising Now, Content Deprecated)}
     The name \textbf{stack machine} or equivalently 0-address machine means that 
     there is no addressable register in this machine neither do operands in the instructions. \par
     
@@ -61,24 +61,10 @@
         \label{figure:stack_model}
     \end{figure}
 
-    \subsection{Queue for Addressing Bus}
-    \label{subsection:queue}
-    We have discussed that the addressing width for the Toxic processor is configurable and 
-    usually more than 4 bits. Thus, we establish a Queue as the data structure for storing
-    the address of the Bus. For the length of the queue, we have $Length(Queue) = BitWidth(BusAddress) / 4 * 2$ \par
-    Queue is a FIFO data structure. However, the Queue data structure we used in the Toxic 
-    processor is similar to the common Queue but with some tweaks. Same as the stack, each 
-    block in the Queue is a 4-bits register. The Queue should supports common operations like 
-    \textbf{enqueue} and \textbf{dequeue}. Refer to Figure \ref{figure:queue_model} for the model
-    of the queue and the connection with the BusAddress. Noted that, when we \textbf{enqueue}, all
-    the blocks shift left one position relative to the BusAddress; when we \textbf{dequeue}, all
-    the blocks shift right one position relative to the BusAddress.
-    \begin{figure}[h!]
-        \centering
-        \includegraphics[scale=0.5]{Toxic_Queue_Model.png}
-        \caption{Toxic Queue Model}
-        \label{figure:queue_model}
-    \end{figure}
+    \subsection{Another Stack for Addressing Bus (Under Revising Now, Content Deprecated)}
+    
+
+    
     \subsection{Memory}
     The memory of the Toxic processor is accessed through Bus and only takes part of the addressing space. 
     The model of the Memory is different from common RAMs since for common RAMs, the block bit width is 1 bype (8 bits)
@@ -151,7 +137,7 @@
         \item Expression:
         \begin{verbatim}
             val = Stack.pop();
-            Queue.enqueue(val);
+            Bus.push(val);
         \end{verbatim}
     \end{itemize}
 
@@ -181,7 +167,7 @@
                     \textbf{dequeued} to the Stack.
         \item Expression:
         \begin{verbatim}
-            val = Queue.dequeue();
+            val = Bus.pop();
             Stack.push(val);
         \end{verbatim}
     \end{itemize}
@@ -387,6 +373,13 @@
         \item Functionality: Branch to the Flag or PC+offset if TOS is less than NTOS.
         \item Example1: \$BL\#end
         \item Example2: \$BL\#-5
+    \end{itemize}
+    \subsection{\$BC}
+    \begin{itemize}
+        \item Usage: \$BC\#[Flag or numeric offset]
+        \item Functionality: Branch to the Flag or PC+offset if there is a carry.
+        \item Example1: \$BC\#end
+        \item Example2: \$BC\#-5
     \end{itemize}
     \subsection{\$ADDD}
     \begin{itemize}
